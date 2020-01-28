@@ -1,0 +1,3 @@
+DECLARE @OurListOfForeignKeyConstraints  NVARCHAR(MAX)
+EXECUTE #ListAllForeignKeyConstraints @TheJsonList=@OurListOfForeignKeyConstraints OUTPUT
+SELECT @OurListOfForeignKeyConstraints AS theForeignKeyConstraints
