@@ -15,7 +15,8 @@
 				PS C:\> Assert-Constraints
 	
 	.NOTES
-		Additional information about the function.
+		An assert function is typically used to display errors when some condition is not true, which is
+        the purpose of this f.
 #>
 function Assert-Constraints($ServerAndDatabaseList)
 {
@@ -282,7 +283,6 @@ Assert-Constraints @(
 )
 
 <#
-
 for the Second one we are writing out a JSON file that records the current state of constraints to 
 files
  #>
@@ -319,12 +319,38 @@ Assert-Constraints @(
 		'TearDownScripts' = @();
 	}
 )
-
 <#
-now we run the tests
-for the first one we are testing whether the data loaded into a built version of the database 
-will come up with errors if we enable constraints
- #>
+Now we have these files we can test any number of existing databases of various versions with data 
+in them to see if the data is compatible, or whether it would come up with errors if we enable 
+constraints
+Whereas, in the first example, we were testing whether the data loaded into a built version of the
+ database would fail any of the WITH CHECK tests, this time we are checking an existing dataset
+  in a living database to see if the data would pass if we were to load it in the version of
+   the database we’ve recorded in the second version of the code.
+
+this time, we’ll demonstrate a slightly different way of maintaining this data structure when
+you have to check several datasets. We save the generic object on disk as a JSON file
+and just change the parts of the object that determine the test that is undertaken
+
+#>
+
+
+@(
+ <# list of connection strings for each of the SQLservers that you need to execute code on #>
+	@{
+		'ServerConnectionString' = 'Server=MyServer;User Id=MyName;Persist Security Info=False';
+		#and a list of databases you wish the string-based (EG JSON report) from. 
+		'Databases' = @('Shadrak', 'Meshak', 'Abednego'); # do all these databases
+		'RootDirectoryForOutputFile' = "$env:USERPROFILE\JSONDocumentation"; #the directory you want it in as subdirectories
+		'minimumCompatibilityLevel' = 130; #specify the minimum database compatibility level. We check!
+		'ScriptDirectory' = 'D:\Github\TestOutConstraints'; # where you store the project SQL files 
+		'fileType' = 'json'; #the filetype of the files you save for each database for reports
+		# and now a list of all the temporary stored procedures you'll need.
+		'setupScripts' = @();
+		'FilesToExecute' = @()
+		'TearDownScripts' = @();
+	}
+)|convertTo-JSON >"$env:USERPROFILE\SQLConstraintCheckConfig.json"
 
 #restoring a configuration
 $MyServerAndDatabaseList= [IO.File]::ReadAllText("$env:USERPROFILE\SQLConstraintCheckConfig.json")|ConvertFrom-Json
