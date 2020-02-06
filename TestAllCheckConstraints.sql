@@ -100,7 +100,7 @@ DECLARE @BreakerCount INT=(SELECT Count(*) FROM @Breakers)
 DECLARE @Success VARCHAR(100)=
   CASE WHEN @Breakercount=0 and @ErrorCount=0 THEN 'Everything went well' 
    ELSE 
-    'There were '+Convert(Varchar(5),@Breakercount)+'  rows that failed checks and '
+    'There were '+Convert(Varchar(5),@Breakercount)+' check constraints that would fail data and '
 	   +CASE WHEN @Errorcount>0 then Convert(Varchar(5),@Errorcount) ELSE 'no' end+' errors' end
 SELECT @TheResult=
   (SELECT  @success AS success,

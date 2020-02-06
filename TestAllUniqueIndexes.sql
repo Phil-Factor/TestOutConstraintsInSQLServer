@@ -93,7 +93,7 @@ DECLARE @BreakerCount INT=(SELECT Count(*) FROM @Breakers)
 DECLARE @Success VARCHAR(100)=
   CASE WHEN @Breakercount=0 and @ErrorCount=0 THEN 'Everything went well' 
    ELSE 
-    'There were '+Convert(Varchar(5),@Breakercount)+' Duplicate rows and '
+    'There were '+Convert(Varchar(5),@Breakercount)+' indexes that do not match the data  and '
 		   +CASE WHEN @Errorcount>0 then Convert(Varchar(5),@Errorcount) ELSE 'no' end+' errors' 
    end
 SELECT @TheResult=

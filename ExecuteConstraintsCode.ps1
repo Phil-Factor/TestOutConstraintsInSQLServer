@@ -119,7 +119,8 @@ function Assert-Constraints($ServerAndDatabaseList)
 				}
 			}
 			$outputFilePath = "$($Job.RootDirectoryForOutputFile)\$($csb.server.Replace('\', $slash))"
-			
+			if ($Job.'DirectoryForinputFile' -eq $null) #nothing special asked for
+            {$inputFilePath ="$outputFilePath\$db"} else {$inputFilePath =$Job.'DirectoryForinputFile'}
 			#make sure that the folder exists for the subdirectory orresponding to the server
 			if (!(Test-Path -path $outputFilePath -PathType Container))
 			{ $null = New-Item -ItemType directory -Path $outputFilePath }
@@ -140,7 +141,7 @@ function Assert-Constraints($ServerAndDatabaseList)
 						$SQLParamComm.CommandText = "use $db";
 						$SQLParamComm.ExecuteScalar()
 						$null = $SQLParamComm.Parameters.Add('@JSONinput', [System.Data.SqlDbType]'NVarchar');
-						$SQLParamComm.Parameters['@JSONinput'].Value = [IO.File]::ReadAllText("$outputFilePath\$db\$($_.input.filename)");
+						$SQLParamComm.Parameters['@JSONinput'].Value = [IO.File]::ReadAllText("$inputFilePath\$($_.input.filename)");
 						try
 						{
 							$paramScript = [IO.File]::ReadAllText("$($job.ScriptDirectory)\$($_.scriptfilename)")
@@ -176,7 +177,7 @@ function Assert-Constraints($ServerAndDatabaseList)
 						#if he has specified an output
 						if (!(Test-Path -path "$outputFilePath\$db" -PathType Container))
 						{ $null = New-Item -ItemType directory -Path "$outputFilePath\$db" }
-						$Result>"$outputFilePath\$db\$($_.Outputfilename)" #output it to the file
+						$Result>"$outputFilePath\$db\$($_.Outputfilename)$($job.filetype)" #output it to the file
 					}
 					$ResultMessage = ($Result | Convertfrom-json).success
 					if ($ResultMessage -ne $null)

@@ -15,7 +15,10 @@ problem has gone away
 To get started, fill in the connection string for your source of data $datasource
 and $dataTarget. You also need to fill in an array of objects, each of which
 define your source and target databases, so you can do a whole list of databases.
-  #>
+  
+This script uses SMO in order to get the list of tables from the database. I've
+published other ways of doing this.  
+#>
 
 
 $Filepath = "$env:USERPROFILE\BCPFiles" # local directory to save build-scripts to
